@@ -8,16 +8,18 @@ https://raw.githubusercontent.com/kayrozd/surge-scripts/main/IPData.sgmodule
 
 脚本地址：https://raw.githubusercontent.com/kayrozd/surge-scripts/main/ipdata-panel.js
 
-面板显示当前出口 IP、Threats 数量和 Trust Score。先通过 api.ipify.org 获取出口 IP，再读取 ipdata.co 网站的公开演示数据；评分缺失时尝试公开 IP 查询页。无需配置个人 API key 或 MITM。在 iOS 进入策略选择页面或在 Mac 打开 Panels 菜单时，距上次更新至少 300 秒才会自动刷新；也可手动刷新。
+面板显示 `AI` 策略组的出口 IP、Threats 数量和 Trust Score，标题为 `IPData · AI`。先通过 api.ipify.org 获取出口 IP，再读取 ipdata.co 网站的公开演示数据；评分缺失时尝试公开 IP 查询页。无需配置个人 API key 或 MITM。在 iOS 进入策略选择页面或在 Mac 打开 Panels 菜单时，距上次更新至少 300 秒才会自动刷新；也可手动刷新。
 
 Threats 按网站 Summary 的方式统计 threat 对象中值为 true 的字段。Trust Score 优先使用同一份演示数据，并按网站 Summary 的阈值显示风险等级：60 及以上 Low risk，40 至不足 60 Moderate risk，低于 40 High risk。若使用公开查询页回退，则保留该页展示的评分与风险等级。未返回的数据显示“未提供”，请求失败显示错误。
 
 网站演示凭据每次从 ipdata.co 页面动态读取，仅用于当次请求，不硬编码、保存或记录。演示服务的可用性及额度由 ipdata.co 控制。
 
-api.ipify.org、ipdata.co、api.ipdata.co 的请求均遵循当前 Surge 分流规则。若使用不同出口，查询到的 IP 可能与直接打开 ipdata.co 首页时不同；需在配置中将三者安排到同一出口。
+脚本中所有请求均通过 `$httpClient` 的 `policy: "AI"` 固定使用已有 `AI` 策略组。配置中需要存在名称完全一致的组。检测使用该组当时选中的节点，切换节点后可手动刷新面板；自动策略组或负载均衡组仍遵循该组自身的选路机制。
 
 公开网页和演示接口可能改变结构、限流或拒绝请求；本脚本不将解析失败视为无风险。已通过真实公开查询页、演示数据和模拟 Surge 回调验证，尚未在 Surge iOS / Mac 中实机验证。
 
 相关文档：[更新记录](docs/changelogs.md)、[项目进度](docs/todo.md)。
 
 模块未设置 `#!system` 平台限制，可供 iOS / Mac 安装。Mac 如遇到旧版缓存，可使用提交固定的 Raw 链接重新安装。
+
+模块引用提交固定的 JS 地址。使用旧版固定提交模块链接的用户，请通过上方 `main` 模块链接重新安装或更新，以获取此次策略组设置。
