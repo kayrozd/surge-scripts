@@ -5,6 +5,7 @@
  * Trust Score 缺失时尝试 ipdata.co/<IP> 公开查询页。
  */
 
+const POLICY = "AI";
 const IP_API = "https://api.ipify.org?format=json";
 const HEADERS = {
   "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
@@ -18,14 +19,14 @@ const deadline = setTimeout(() => finish("请求超时，请刷新重试", "#FF9
 function finish(content, color = "#5AC8FA") {
   if (finished) return;
   finished = true;
-  clearTimeout(deadline);
-  $done({ title: "IPData", content, icon: "shield.lefthalf.filled", "icon-color": color });
+  if (typeof clearTimeout === "function") clearTimeout(deadline);
+  $done({ title: "IPData · " + POLICY, content, icon: "shield.lefthalf.filled", "icon-color": color });
 }
 
 function get(url) {
   return new Promise((resolve, reject) => {
-    $httpClient.get({ url, headers: HEADERS, timeout: 6 }, (error, response, body) => {
-      if (error) return reject(new Error("网络请求失败"));
+    $httpClient.get({ url, headers: HEADERS, timeout: 6, policy: POLICY }, (error, response, body) => {
+      if (error) return reject(new Error("AI 策略组请求失败，请检查组名和节点"));
       const status = Number(response && (response.status || response.statusCode));
       if (status < 200 || status >= 300 || !body) {
         return reject(new Error("网站返回异常（HTTP " + (status || "未知") + "）"));
